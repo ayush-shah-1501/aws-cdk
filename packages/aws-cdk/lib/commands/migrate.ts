@@ -82,11 +82,14 @@ export async function generateCdkApp(stackName: string, stack: string, language:
  * @returns A string representation of a CDK stack file
  */
 export function generateStack(template: string, stackName: string, language: string) {
+  const formattedStackName = `${camelCase(decamelize(stackName), { pascalCase: true })}Stack`;
   try {
-    const formattedStackName = `${camelCase(decamelize(stackName), { pascalCase: true })}Stack`;
     return cdk_from_cfn.transmute(template, language, formattedStackName);
   } catch (e) {
-    throw new Error(`stack generation failed due to error '${(e as Error).message}'`);
+    const errorMessage = (e as Error).message === 'unreachable'
+      ? 'template and/or language inputs caused the source code to panic'
+      : (e as Error).message.replace('TransmuteError: ', '');
+    throw new Error(`${formattedStackName} could not be generated because ${errorMessage}`);
   }
 }
 
@@ -120,7 +123,7 @@ export function readFromPath(inputPath: string): string {
 export async function readFromStack(stackName: string, sdkProvider: SdkProvider, environment: Environment): Promise<string | undefined> {
   const cloudFormation = (await sdkProvider.forEnvironment(environment, Mode.ForReading)).sdk.cloudFormation();
 
-  const stack = await CloudFormationStack.lookup(cloudFormation, stackName);
+  const stack = await CloudFormationStack.lookup(cloudFormation, stackName, true);
   if (stack.stackStatus.isDeploySuccess || stack.stackStatus.isRollbackSuccess) {
     return JSON.stringify(await stack.template());
   } else {
@@ -295,8 +298,8 @@ export enum TemplateSourceOptions {
  */
 type TemplateSource =
   | { source: TemplateSourceOptions.SCAN }
-  | { source: TemplateSourceOptions.PATH, templatePath: string }
-  | { source: TemplateSourceOptions.STACK, stackName: string }
+  | { source: TemplateSourceOptions.PATH; templatePath: string }
+  | { source: TemplateSourceOptions.STACK; stackName: string }
   ;
 
 /**

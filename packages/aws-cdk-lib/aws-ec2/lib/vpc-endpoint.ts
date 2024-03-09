@@ -73,7 +73,7 @@ export enum VpcEndpointType {
    * A gateway endpoint is a gateway that is a target for a specified route in
    * your route table, used for traffic destined to a supported AWS service.
    */
-  GATEWAY = 'Gateway'
+  GATEWAY = 'Gateway',
 }
 
 /**
@@ -133,7 +133,7 @@ export interface GatewayVpcEndpointOptions {
    *
    *
    */
-  readonly subnets?: SubnetSelection[]
+  readonly subnets?: SubnetSelection[];
 }
 
 /**
@@ -143,7 +143,7 @@ export interface GatewayVpcEndpointProps extends GatewayVpcEndpointOptions {
   /**
    * The VPC network in which the gateway endpoint will be used.
    */
-  readonly vpc: IVpc
+  readonly vpc: IVpc;
 }
 
 /**
@@ -268,6 +268,8 @@ export class InterfaceVpcEndpointAwsService implements IInterfaceVpcEndpointServ
   public static readonly APP_RUNNER = new InterfaceVpcEndpointAwsService('apprunner');
   public static readonly APP_RUNNER_REQUESTS = new InterfaceVpcEndpointAwsService('apprunner.requests');
   public static readonly APP_SYNC = new InterfaceVpcEndpointAwsService('appsync-api');
+  public static readonly APPCONFIG = new InterfaceVpcEndpointAwsService('appconfig');
+  public static readonly APPCONFIGDATA = new InterfaceVpcEndpointAwsService('appconfigdata');
   public static readonly APPLICATION_AUTOSCALING = new InterfaceVpcEndpointAwsService('application-autoscaling');
   public static readonly APPLICATION_MIGRATION_SERVICE = new InterfaceVpcEndpointAwsService('mgn');
   public static readonly APPSTREAM_API = new InterfaceVpcEndpointAwsService('appstream.api');
@@ -621,7 +623,7 @@ export interface InterfaceVpcEndpointProps extends InterfaceVpcEndpointOptions {
   /**
    * The VPC network in which the interface endpoint will be used.
    */
-  readonly vpc: IVpc
+  readonly vpc: IVpc;
 }
 
 /**
